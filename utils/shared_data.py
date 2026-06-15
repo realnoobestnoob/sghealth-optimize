@@ -62,23 +62,22 @@ def _save_to_disk(data: dict) -> None:
 
 @st.cache_data(show_spinner="Loading datasets and running clustering…")
 def get_pipeline_data() -> dict:
-    cache_path = os.path.join(CACHE_DIR, "clustered.csv")
+    """
+    Run the full ETL + clustering pipeline once (or load from disk cache).
 
-    st.write(f"DEBUG CACHE_DIR = {CACHE_DIR}")
-    st.write(f"DEBUG cache exists = {os.path.exists(cache_path)}")
-    st.write(f"DEBUG _cache_complete() = {_cache_complete()}")
-    if os.path.isdir(CACHE_DIR):
-        st.write(f"DEBUG files in cache dir = {os.listdir(CACHE_DIR)}")
+    Returns a dict with all artefacts needed by Overview, Risk Map, Cluster
+    Analysis, and Trends pages:
+      pop        : raw population long-format DataFrame
+      clustered  : feature table with cluster_label / cluster_color
+      ec, dg     : eldercare / dementia GTP location DataFrames
+      poly, hospitals : polyclinic / hospital location DataFrames
+      silhouettes: dict of k -> silhouette score
 
+    To force a recompute (e.g. after new SingStat data is added), delete the
+    data/pipeline_cache/ directory and restart the app.
+    """
     if _cache_complete():
-        data = _load_from_disk()
-        st.write(f"DEBUG loaded from disk, clustered rows = {len(data['clustered'])}")
-        st.write(f"DEBUG cluster_label counts = {data['clustered']['cluster_label'].value_counts().to_dict()}")
-        return data
-
-    st.write("DEBUG !! recomputing from scratch (cache incomplete) !!")
-    pop = load_population()
-    ...
+        return _load_from_disk()
 
     pop = load_population()
     feat = build_features(pop)
