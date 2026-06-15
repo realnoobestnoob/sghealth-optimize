@@ -62,22 +62,6 @@ def _save_to_disk(data: dict) -> None:
 
 @st.cache_data(show_spinner="Loading datasets and running clustering…")
 def get_pipeline_data() -> dict:
-    """
-    Run the full ETL + clustering pipeline once (or load from disk cache).
-
-    Returns a dict with all artefacts needed by Overview, Risk Map, Cluster
-    Analysis, and Trends pages:
-      pop        : raw population long-format DataFrame
-      clustered  : feature table with cluster_label / cluster_color
-      ec, dg     : eldercare / dementia GTP location DataFrames
-      poly, hospitals : polyclinic / hospital location DataFrames
-      silhouettes: dict of k -> silhouette score
-
-    To force a recompute (e.g. after new SingStat data is added), delete the
-    data/pipeline_cache/ directory and restart the app.
-    """
-@st.cache_data(show_spinner="Loading datasets and running clustering…")
-def get_pipeline_data() -> dict:
     cache_path = os.path.join(CACHE_DIR, "clustered.csv")
 
     st.write(f"DEBUG CACHE_DIR = {CACHE_DIR}")
